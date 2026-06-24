@@ -1,0 +1,469 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#f0f2f5;font-size:13px}
+.topbar{background:linear-gradient(135deg,#003366,#005B9A);color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.logo-area h1{font-size:16px;font-weight:700;letter-spacing:.3px}
+.logo-area p{font-size:10px;color:#F0A500;margin-top:1px}
+.topbar-right{text-align:right;font-size:11px;color:rgba(255,255,255,.75)}
+.topbar-right strong{color:#fff;font-size:13px}
+.nav{background:#002855;display:flex;overflow-x:auto;border-bottom:3px solid #F0A500}
+.nav-btn{background:none;border:none;color:rgba(255,255,255,.6);padding:9px 16px;cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-3px;transition:.15s;text-transform:uppercase;letter-spacing:.4px}
+.nav-btn.active,.nav-btn:hover{color:#fff;border-bottom-color:#F0A500}
+.page{display:none;padding:16px 20px;max-width:100%;overflow-x:auto}
+.page.active{display:block}
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:#fff;border-radius:8px;padding:13px 14px;border-left:4px solid #003366;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.kpi.g{border-left-color:#217346}.kpi.r{border-left-color:#C00000}.kpi.o{border-left-color:#E36C09}.kpi.a{border-left-color:#F0A500}.kpi.b{border-left-color:#005B9A}
+.kpi-label{font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px}
+.kpi-val{font-size:24px;font-weight:700;color:#1a1a1a;line-height:1}
+.kpi-sub{font-size:10px;color:#aaa;margin-top:3px}
+/* CARDS */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+.card{background:#fff;border-radius:8px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.card.full{grid-column:1/-1}
+.card-title{font-size:10px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #F0A500}
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{background:#003366;color:#fff;padding:7px 9px;text-align:left;font-size:10px;font-weight:600;letter-spacing:.3px;position:sticky;top:0}
+.tbl td{padding:6px 9px;border-bottom:1px solid #f0f0f0;color:#333;vertical-align:middle}
+.tbl tr:nth-child(even) td{background:#fafafa}
+.tbl tr:hover td{background:#e8f0f8}
+/* BADGES */
+.ok{background:#E6F4EA;color:#1E7E34;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600}
+.pend{background:#FEE8E8;color:#B00020;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600}
+.warn{background:#FEF3E2;color:#8B5000;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600}
+/* PROGRESS */
+.pgbar{height:5px;background:#e8e8e8;border-radius:3px;overflow:hidden;margin-top:3px}
+.pgfill{height:100%;border-radius:3px}
+/* HORIZONTAL BAR */
+.hbar-wrap{margin-bottom:6px}
+.hbar-label{display:flex;justify-content:space-between;font-size:10px;color:#555;margin-bottom:2px}
+.hbar{height:14px;background:#e8e8e8;border-radius:3px;overflow:hidden;position:relative}
+.hbar-fill{height:100%;border-radius:3px;position:relative;transition:.5s}
+.hbar-fill span{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9px;color:#fff;font-weight:700}
+/* DONUT TEXT */
+.donut-wrap{position:relative;width:140px;height:140px;margin:0 auto}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.donut-pct{font-size:22px;font-weight:700;color:#003366}
+.donut-lbl{font-size:9px;color:#888;text-transform:uppercase}
+/* FILTER */
+.filter-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.filter-row label{font-size:10px;color:#888;font-weight:600;text-transform:uppercase}
+.filter-row select,.filter-row input{font-size:11px;padding:5px 8px;border:1px solid #ddd;border-radius:4px;outline:none;color:#333}
+.filter-row select:focus,.filter-row input:focus{border-color:#005B9A}
+.tbl-wrap{max-height:380px;overflow-y:auto;border-radius:4px;border:1px solid #eee}
+/* CURSO CHIPS */
+.chip{display:inline-block;background:#FEE8E8;color:#B00020;border-radius:10px;padding:1px 7px;font-size:9px;margin:1px;font-weight:600;white-space:nowrap}
+/* ALERT NUM */
+.alert-num{background:#C00000;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;margin-left:4px;vertical-align:middle}
+.sect-ttl{font-size:11px;font-weight:700;color:#333;margin:14px 0 8px;text-transform:uppercase;letter-spacing:.4px;border-left:3px solid #F0A500;padding-left:8px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo-area">
+    <h1>✈ LATAM Airlines — CGH | Gestão de Treinamentos</h1>
+    <p>Base Congonhas · Coordenador: Higor Oscar · Regional: Flávia Maciel</p>
+  </div>
+  <div class="topbar-right">
+    <strong>Jun/2025</strong><br>Atualizado agora
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="goPage('exec',this)">📊 Visão Executiva</button>
+  <button class="nav-btn" onclick="goPage('cursos',this)">📚 Cursos<span class="alert-num">35</span></button>
+  <button class="nav-btn" onclick="goPage('pendentes',this)">⚠️ Pendentes<span class="alert-num" id="cnt-pend">116</span></button>
+  <button class="nav-btn" onclick="goPage('gestores',this)">👥 Por Gestor</button>
+  <button class="nav-btn" onclick="goPage('cargo',this)">🏷️ Por Cargo</button>
+  <button class="nav-btn" onclick="goPage('busca',this)">🔍 Buscar Colaborador</button>
+</div>
+
+<!-- PAGE 1: EXEC -->
+<div class="page active" id="page-exec">
+  <div class="metrics">
+    <div class="kpi b"><div class="kpi-label">Colaboradores</div><div class="kpi-val">886</div><div class="kpi-sub">876 ativos</div></div>
+    <div class="kpi b"><div class="kpi-label">Total de Cursos</div><div class="kpi-val">35</div><div class="kpi-sub">Base CGH</div></div>
+    <div class="kpi b"><div class="kpi-label">Registros Totais</div><div class="kpi-val">15.615</div><div class="kpi-sub">Cursos × Colaboradores</div></div>
+    <div class="kpi g"><div class="kpi-label">Cursos em Dia</div><div class="kpi-val">15.343</div><div class="kpi-sub">OK confirmados</div></div>
+    <div class="kpi r"><div class="kpi-label">Cursos Pendentes</div><div class="kpi-val">272</div><div class="kpi-sub">116 colaboradores</div></div>
+    <div class="kpi g"><div class="kpi-label">Conformidade</div><div class="kpi-val">98,3%</div><div class="kpi-sub">Meta: 95% ✓</div></div>
+    <div class="kpi o"><div class="kpi-label">Colabs c/ Pendência</div><div class="kpi-val">116</div><div class="kpi-sub">13,1% da base</div></div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">📊 Conformidade Global — CGH</div>
+      <div class="donut-wrap"><canvas id="cDonut" width="140" height="140"></canvas>
+        <div class="donut-center"><div class="donut-pct">98,3%</div><div class="donut-lbl">Conformidade</div></div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:12px;justify-content:center;font-size:11px">
+        <span style="color:#217346">● Em Dia: 15.343</span>
+        <span style="color:#C00000">● Pendentes: 272</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 Top 10 Cursos com mais Pendências</div>
+      <div id="top-cursos"></div>
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">👤 Distribuição por Cargo (pessoas)</div>
+      <div style="position:relative;height:220px"><canvas id="cCargo"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚠️ Pendências por Cargo</div>
+      <div id="pend-cargo"></div>
+    </div>
+  </div>
+
+  <div class="card full">
+    <div class="card-title">📈 Conformidade por Gestor — Top 15</div>
+    <div id="conf-gestores"></div>
+  </div>
+</div>
+
+<!-- PAGE 2: CURSOS -->
+<div class="page" id="page-cursos">
+  <div class="card">
+    <div class="card-title">📚 Status de Todos os 35 Cursos — Base CGH</div>
+    <div class="filter-row">
+      <label>Filtrar:</label>
+      <input type="text" id="f-curso" placeholder="Nome do curso..." oninput="renderCursos()" style="width:240px">
+      <label>Mostrar:</label>
+      <select id="f-curso-tipo" onchange="renderCursos()">
+        <option value="">Todos</option>
+        <option value="pend">Com Pendência</option>
+        <option value="ok">100% OK</option>
+      </select>
+    </div>
+    <div class="tbl-wrap"><table class="tbl" id="tbl-cursos">
+      <thead><tr><th>#</th><th>Curso</th><th style="text-align:center">Total</th><th style="text-align:center">✅ OK</th><th style="text-align:center">⚠️ Pendentes</th><th style="min-width:140px">Conformidade</th></tr></thead>
+      <tbody id="body-cursos"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- PAGE 3: PENDENTES -->
+<div class="page" id="page-pendentes">
+  <div class="card">
+    <div class="card-title">⚠️ Colaboradores com Cursos Pendentes (116 pessoas · 272 pendências)</div>
+    <div class="filter-row">
+      <label>Gestor:</label>
+      <select id="f-pg" onchange="renderPend()"><option value="">Todos</option></select>
+      <label>Cargo:</label>
+      <select id="f-pc" onchange="renderPend()"><option value="">Todos</option></select>
+      <label>Buscar:</label>
+      <input type="text" id="f-pq" placeholder="Nome ou curso..." oninput="renderPend()" style="width:160px">
+    </div>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>BP</th><th>Nome</th><th>Cargo</th><th>Gestor</th><th style="text-align:center">Qtd</th><th>Cursos Pendentes</th></tr></thead>
+      <tbody id="body-pend"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- PAGE 4: GESTORES -->
+<div class="page" id="page-gestores">
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">👥 Conformidade por Gestor</div>
+      <div class="tbl-wrap" style="max-height:420px"><table class="tbl">
+        <thead><tr><th>Gestor</th><th style="text-align:center">Pessoas</th><th style="text-align:center">Pend.</th><th style="min-width:130px">Conformidade</th></tr></thead>
+        <tbody id="body-gest-tbl"></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 Ranking de Pendências por Gestor</div>
+      <div style="position:relative;height:400px"><canvas id="cGestores"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5: CARGO -->
+<div class="page" id="page-cargo">
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">🏷️ Conformidade por Cargo</div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Cargo</th><th style="text-align:center">Pessoas</th><th style="text-align:center">Pend.</th><th style="text-align:center">% Conf.</th></tr></thead>
+        <tbody id="body-cargo-tbl"></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 Pendências por Cargo</div>
+      <div style="position:relative;height:360px"><canvas id="cCargoBar"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 6: BUSCA -->
+<div class="page" id="page-busca">
+  <div class="card">
+    <div class="card-title">🔍 Buscar Colaborador na Base CGH</div>
+    <div class="filter-row">
+      <input type="text" id="busca-q" placeholder="Digite o nome, BP, cargo ou e-mail..." oninput="renderBusca()" style="width:320px;font-size:13px;padding:7px 10px">
+    </div>
+    <div id="busca-result" style="color:#888;font-size:12px;padding:8px 0">Digite ao menos 2 caracteres para buscar...</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ── DADOS REAIS DA PLANILHA ──────────────────────────────────────────────────
+const COLABS_PEND = [{"bp":"3870834","nome":"JESSICA BRAGA MENDONCA","cargo":"SUPERVISOR AEROPORTO OPERACIONAL","gestor":"LUANA DOS SANTOS QUIXABEIRA","pendentes":["ARTIGOS PERIGOSOS AEROPORTO - CATEGORIA 9","ATENDIMENTO A PASSAGEIROS ESPECIAIS","AVSEC PARA ATENDIMENTO AO PASSAGEIRO","CRM (CORPORATE RESOURCE MANAGEMENT)","CÓDIGO DE CONDUTA LATAM","EMPODERAMENTO","FORMAÇÃO DE LOJAS (TEÓRICO)","GERENCIAMENTO DO COMPORTAMENTO INDISCIPLINADO","NR17 - ERGONOMIA","PCI COMPLIANCE - VENDA SEGURA","PLANO DE RESPOSTA A EMERGÊNCIAS LOCAL (ATO)","PRIMEIROS SOCORROS","PROAJUDA","Pet Tracker","SAÚDE E SEGURANÇA NO TRABALHO - NR01","SGSO LATAM / CONSCIENTIZAÇÃO SOBRE SEGURANÇA OPERACIONAL","SIMULADOR WORLDTRACER BÁSICO","Transporte de Animais Vivos - Aeroporto"],"qtdPend":18},{"bp":"4649093","nome":"CARLOS EDUARDO SILVA DOS SANTOS","cargo":"OPERADOR EQUIPAMENTOS","gestor":"LUANA DOS SANTOS QUIXABEIRA","pendentes":["ARTIGOS PERIGOSOS - CATEGORIA 8","AVSEC PARA OPERAÇÕES DE SOLO","BRS - SISTEMA DE CONCILIAÇÃO DE BAGAGEM","CRM (CORPORATE RESOURCE MANAGEMENT)","CÓDIGO DE CONDUTA LATAM","NR17 - ERGONOMIA","OPERAÇÃO DE EQUIPAMENTOS DE RAMPA E PUSH-BACK","OPERAÇÕES DE RAMPA","PLANO DE RESPOSTA A EMERGÊNCIAS LOCAL (ATO)","PRIMEIROS SOCORROS","Pet Tracker","SAÚDE E SEGURANÇA NO TRABALHO - NR01","SEGURANÇA DA INFORMAÇÃO","SGSO LATAM / CONSCIENTIZAÇÃO SOBRE SEGURANÇA OPERACIONAL","Transporte de Animais de Estimação - Cães e Gatos"],"qtdPend":15},{"bp":"6021448","nome":"LEANDRO DA SILVA RODRIGUES","cargo":"AGENTE BAGAGEM E RAMPA","gestor":"LUCAS PEREIRA SANTOS","pendentes":["ARTIGOS PERIGOSOS - CATEGORIA 8","AVSEC PARA OPERAÇÕES DE SOLO","BRS - SISTEMA DE CONCILIAÇÃO DE BAGAGEM","CRM (CORPORATE RESOURCE MANAGEMENT)","CÓDIGO DE CONDUTA LATAM","NR17 - ERGONOMIA","OPERAÇÕES DE RAMPA","PLANO DE RESPOSTA A EMERGÊNCIAS LOCAL (ATO)","PRIMEIROS SOCORROS","PROAJUDA","Pet Tracker","SAÚDE E SEGURANÇA NO TRABALHO - NR01","SEGURANÇA DA INFORMAÇÃO","SGSO LATAM / CONSCIENTIZAÇÃO SOBRE SEGURANÇA OPERACIONAL","Transporte de Animais de Estimação - Cães e Gatos"],"qtdPend":15},{"bp":"4617507","nome":"SAMANTHA DE MACEDO SILVA","cargo":"AGENTE AEROPORTO","gestor":"NAYARA OLIVEIRA SILVA","pendentes":["ARTIGOS PERIGOSOS AEROPORTO - CATEGORIA 9","ATENDIMENTO A PASSAGEIROS ESPECIAIS","AVSEC PARA ATENDIMENTO AO PASSAGEIRO","CRM (CORPORATE RESOURCE MANAGEMENT)","CÓDIGO DE CONDUTA LATAM","EMPODERAMENTO","GERENCIAMENTO DO COMPORTAMENTO INDISCIPLINADO","PCI COMPLIANCE - VENDA SEGURA","PLANO DE RESPOSTA A EMERGÊNCIAS LOCAL (ATO)","PRIMEIROS SOCORROS","Pet Tracker","SAÚDE E SEGURANÇA NO TRABALHO - NR01","SGSO LATAM / CONSCIENTIZAÇÃO SOBRE SEGURANÇA OPERACIONAL","Transporte de Animais Vivos - Aeroporto"],"qtdPend":14},{"bp":"6021454","nome":"LUAM HENRIQUE OLIVEIRA DA SILVA","cargo":"AGENTE BAGAGEM E RAMPA","gestor":"LUTERCIO SANTOS DA SILVA","pendentes":["AVSEC PARA OPERAÇÕES DE SOLO","BRS - SISTEMA DE CONCILIAÇÃO DE BAGAGEM","CRM (CORPORATE RESOURCE MANAGEMENT)","CÓDIGO DE CONDUTA LATAM","OPERAÇÕES DE RAMPA","PLANO DE RESPOSTA A EMERGÊNCIAS LOCAL (ATO)","PRIMEIROS SOCORROS","Pet Tracker","SAÚDE E SEGURANÇA NO TRABALHO - NR01","SGSO LATAM / CONSCIENTIZAÇÃO SOBRE SEGURANÇA OPERACIONAL","Transporte de Animais de Estimação - Cães e Gatos"],"qtdPend":11},{"bp":"6000935","nome":"BRUNA VALERIA ALMEIDA NASCIMENTO","cargo":"AGENTE AEROPORTO","gestor":"EVELYN SILVA DE JESUS BENA","pendentes":["ARTIGOS PERIGOSOS AEROPORTO - CATEGORIA 9","ATENDIMENTO A PASSAGEIROS ESPECIAIS","AVSEC PARA ATENDIMENTO AO PASSAGEIRO","CRM (CORPORATE RESOURCE MANAGEMENT)","CÓDIGO DE CONDUTA LATAM","GERENCIAMENTO DO COMPORTAMENTO INDISCIPLINADO","PCI COMPLIANCE - VENDA SEGURA","PLANO DE RESPOSTA A EMERGÊNCIAS LOCAL (ATO)","SGSO LATAM / CONSCIENTIZAÇÃO SOBRE SEGURANÇA OPERACIONAL"],"qtdPend":9},{"bp":"6002408","nome":"CAUE DOS SANTOS SILVA","cargo":"AGENTE AEROPORTO","gestor":"BRUNA APARECIDA BARBOSA","pendentes":["ABERTURA DE PORTAS - TEORIA","ATENDIMENTO A PASSAGEIROS ESPECIAIS","AVSEC PARA ATENDIMENTO AO PASSAGEIRO","DOCUMENTAÇÃO DE VIAGEM (VERSÃO CURTA)","EMPODERAMENTO","FORMAÇÃO CHECK-IN - SIMULADOR SABRE","FORMAÇÃO EMBARQUE - FORMAÇÃO","PCI COMPLIANCE - VENDA SEGURA","Transporte de Animais Vivos - Aeroporto"],"qtdPend":9},{"bp":"6003279","nome":"EVERTON OLIVEIRA CARACAS","cargo":"AGENTE AEROPORTO","gestor":"BRENDA LENA DE OLIVEIRA SILVA","pendentes":["ATENDIMENTO A PASSAGEIROS ESPECIAIS","AVSEC PARA ATENDIMENTO AO PASSAGEIRO","CRM (CORPORATE RESOURCE MANAGEMENT)","DOCUMENTAÇÃO DE VIAGEM (VERSÃO CURTA)","FORMAÇÃO CHECK-IN - FORMAÇÃO","FORMAÇÃO CHECK-IN - SIMULADOR SABRE","FORMAÇÃO EMBARQUE - FORMAÇÃO","PCI COMPLIANCE - VENDA SEGURA","Transporte de Animais Vivos - Aeroporto"],"qtdPend":9},{"bp":"6003107","nome":"DAVID DE LIMA SOUZA","cargo":"AGENTE BAGAGEM E RAMPA","gestor":"LUCAS PEREIRA SANTOS","pendentes":["AVSEC PARA OPERAÇÕES DE SOLO","BRS - SISTEMA DE CONCILIAÇÃO DE BAGAGEM","CRM (CORPORATE RESOURCE MANAGEMENT)","CÓDIGO DE CONDUTA LATAM","OPERAÇÕES DE RAMPA","PLANO DE RESPOSTA A EMERGÊNCIAS LOCAL (ATO)","SEGURANÇA DA INFORMAÇÃO","SGSO LATAM / CONSCIENTIZAÇÃO SOBRE SEGURANÇA OPERACIONAL"],"qtdPend":8},{"bp":"4610813","nome":"RODRIGO DE SOUZA COSTA","cargo":"AGENTE BAGAGEM E RAMPA","gestor":"LUTERCIO SANTOS DA SILVA","pendentes":["BRS - SISTEMA DE CONCILIAÇÃO DE BAGAGEM","PLANO DE RESPOSTA A EMERGÊNCIAS LOCAL (ATO)","PRIMEIROS SOCORROS","Pet Tracker","SAÚDE E SEGURANÇA NO TRABALHO - NR01","Transporte de Animais de Estimação - Cães e Gatos"],"qtdPend":6},{"bp":"6001384","nome":"LARISSA GABRIELE DOS SANTOS ALVES","cargo":"AGENTE AEROPORTO","gestor":"NAYARA OLIVEIRA SILVA","pendentes":["ARTIGOS PERIGOSOS AEROPORTO - CATEGORIA 9","ATENDIMENTO A PASSAGEIROS ESPECIAIS","AVSEC PARA ATENDIMENTO AO PASSAGEIRO","CRM (CORPORATE RESOURCE MANAGEMENT)","GERENCIAMENTO DO COMPORTAMENTO INDISCIPLINADO","SGSO LATAM / CONSCIENTIZAÇÃO SOBRE SEGURANÇA OPERACIONAL"],"qtdPend":6},{"bp":"6003026","nome":"LUCAS GUILHERME FERRAZ GOUVEIA","cargo":"OPERADOR EQUIPAMENTOS","gestor":"LUANA DOS SANTOS QUIXABEIRA","pendentes":["ARTIGOS PERIGOSOS - CATEGORIA 8","AVSEC PARA OPERAÇÕES DE SOLO","CRM (CORPORATE RESOURCE MANAGEMENT)","CÓDIGO DE CONDUTA LATAM","OPERAÇÕES DE RAMPA","SGSO LATAM / CONSCIENTIZAÇÃO SOBRE SEGURANÇA OPERACIONAL"],"qtdPend":6},{"bp":"6003115","nome":"EMERSON SANTOS DE LIMA MELO","cargo":"AGENTE BAGAGEM E RAMPA","gestor":"ALESXANDRO PEREIRA FERNANDES","pendentes":["ARTIGOS PERIGOSOS - CATEGORIA 8","BRS - SISTEMA DE CONCILIAÇÃO DE BAGAGEM","CRM (CORPORATE RESOURCE MANAGEMENT)","CÓDIGO DE CONDUTA LATAM","PLANO DE RESPOSTA A EMERGÊNCIAS LOCAL (ATO)","SGSO LATAM / CONSCIENTIZAÇÃO SOBRE SEGURANÇA OPERACIONAL"],"qtdPend":6},{"bp":"6002953","nome":"ANDERSON DE ALMEIDA DOS SANTOS","cargo":"OPERADOR EQUIPAMENTOS","gestor":"LUANA DOS SANTOS QUIXABEIRA","pendentes":["BRS - SISTEMA DE CONCILIAÇÃO DE BAGAGEM","CÓDIGO DE CONDUTA LATAM","OPERAÇÕES DE RAMPA","SGSO LATAM / CONSCIENTIZAÇÃO SOBRE SEGURANÇA OPERACIONAL","Transporte de Animais de Estimação - Cães e Gatos"],"qtdPend":5}];
+
+const GESTOR_STATS = {"LUANA DOS SANTOS QUIXABEIRA":{"ok":2723,"pend":93,"pessoas":170},"LUCAS PEREIRA SANTOS":{"ok":418,"pend":26,"pessoas":29},"NAYARA OLIVEIRA SILVA":{"ok":396,"pend":22,"pessoas":20},"LUTERCIO SANTOS DA SILVA":{"ok":238,"pend":17,"pessoas":17},"BRENDA LENA DE OLIVEIRA SILVA":{"ok":326,"pend":10,"pessoas":16},"BRUNA APARECIDA BARBOSA":{"ok":264,"pend":9,"pessoas":13},"EVELYN SILVA DE JESUS BENA":{"ok":52,"pend":9,"pessoas":3},"REYNALDO TADEU RAMOS NEVES":{"ok":644,"pend":7,"pessoas":41},"ISABELA PEREIRA DE CARVALHO":{"ok":287,"pend":7,"pessoas":14},"LUANA CHINELATO DOS SANTOS":{"ok":435,"pend":6,"pessoas":21},"FERNANDO SANTOS MUNIZ":{"ok":111,"pend":6,"pessoas":7},"ALESXANDRO PEREIRA FERNANDES":{"ok":24,"pend":6,"pessoas":2},"Sem Gestor":{"ok":154,"pend":5,"pessoas":10},"JONATHAS DA SILVA ROCHA":{"ok":290,"pend":4,"pessoas":14},"ADRIANA SANTOS SILVA":{"ok":270,"pend":3,"pessoas":13},"MARIA EDUARDA DE ANDRADE REIS":{"ok":417,"pend":3,"pessoas":20},"GISLEY MILENE MIRAO":{"ok":57,"pend":3,"pessoas":3},"FERNANDO FERREIRA CORTEZ":{"ok":144,"pend":3,"pessoas":9},"MARIANELA ERRASTI GARCIA":{"ok":270,"pend":3,"pessoas":13},"ALBANO LIMA CARVALHO":{"ok":126,"pend":2,"pessoas":9}};
+
+const CARGO_STATS = {"AGENTE AEROPORTO":{"ok":5460,"pend":84,"pessoas":264},"AGENTE BAGAGEM E RAMPA":{"ok":3530,"pend":55,"pessoas":242},"OPERADOR EQUIPAMENTOS":{"ok":2205,"pend":51,"pessoas":144},"SUPERVISOR AEROPORTO OPERACIONAL":{"ok":440,"pend":43,"pessoas":21},"LIDER RAMPA":{"ok":984,"pend":19,"pessoas":59},"AGENTE AEROPORTO LIDER":{"ok":515,"pend":5,"pessoas":26},"AGENTE AEROPORTO CONTROLE OPERACIONAL":{"ok":835,"pend":5,"pessoas":42},"AGENTE AEROPORTO VIAGENS":{"ok":396,"pend":4,"pessoas":20},"SUPERVISOR OPERACIONAL RAMPA":{"ok":142,"pend":2,"pessoas":9},"AGENTE AEROPORTO BAGAGENS":{"ok":378,"pend":2,"pessoas":20},"COORDENADOR CONTROLE OPERACIONAL":{"ok":14,"pend":1,"pessoas":1},"COORDENADOR SR AEROPORTOS E GSE":{"ok":11,"pend":1,"pessoas":1}};
+
+const CURSO_RESUME = {"ABERTURA DE PORTAS - TEORIA":{"ok":354,"pend":1},"ARTIGOS PERIGOSOS - CATEGORIA 8":{"ok":375,"pend":6},"ARTIGOS PERIGOSOS AEROPORTO - CATEGORIA 9":{"ok":389,"pend":9},"ARTIGOS PERIGOSOS CATEGORIA 10 (GRH)":{"ok":57,"pend":15},"ATENDIMENTO A PASSAGEIROS ESPECIAIS":{"ok":389,"pend":6},"AVSEC PARA ATENDIMENTO A PASSAGEIROS":{"ok":2,"pend":0},"AVSEC PARA ATENDIMENTO AO PASSAGEIRO":{"ok":368,"pend":30},"AVSEC PARA OPERADOR AÉREO":{"ok":3,"pend":0},"AVSEC PARA OPERAÇÕES DE SOLO":{"ok":468,"pend":6},"BRS - SISTEMA DE CONCILIAÇÃO DE BAGAGEM":{"ok":359,"pend":21},"CRM (CORPORATE RESOURCE MANAGEMENT)":{"ok":850,"pend":16},"CÓDIGO DE CONDUTA LATAM":{"ok":867,"pend":10},"DOCUMENTAÇÃO DE VIAGEM (VERSÃO CURTA)":{"ok":367,"pend":2},"EMPODERAMENTO":{"ok":350,"pend":3},"FORMAÇÃO CHECK-IN - FORMAÇÃO":{"ok":389,"pend":6},"FORMAÇÃO CHECK-IN - SIMULADOR SABRE":{"ok":390,"pend":5},"FORMAÇÃO DE LOJAS (TEÓRICO)":{"ok":30,"pend":11},"FORMAÇÃO EMBARQUE - FORMAÇÃO":{"ok":392,"pend":3},"GERENCIAMENTO DO COMPORTAMENTO INDISCIPLINADO":{"ok":391,"pend":9},"NR17 - ERGONOMIA":{"ok":874,"pend":3},"OPERAÇÃO DE EQUIPAMENTOS DE RAMPA E PUSH-BACK":{"ok":191,"pend":9},"OPERAÇÕES DE RAMPA":{"ok":446,"pend":6},"PCI COMPLIANCE - VENDA SEGURA":{"ok":388,"pend":11},"PLANO DE RESPOSTA A EMERGÊNCIAS LOCAL (ATO)":{"ok":861,"pend":12},"PRIMEIROS SOCORROS":{"ok":871,"pend":6},"PROAJUDA":{"ok":874,"pend":3},"PROCEDIMENTOS DE OPERAÇÕES TERRESTRES":{"ok":78,"pend":4},"Pet Tracker":{"ok":821,"pend":8},"SAÚDE E SEGURANÇA NO TRABALHO - NR01":{"ok":866,"pend":7},"SEGURANÇA DA INFORMAÇÃO":{"ok":474,"pend":4},"SGSO LATAM / CONSCIENTIZAÇÃO SOBRE SEGURANÇA OPERACIONAL":{"ok":864,"pend":13},"SIMULADOR WORLDTRACER BÁSICO":{"ok":7,"pend":14},"SISTEMA OPERACIONAL AMADEUS RAMP MOBILE":{"ok":82,"pend":0},"Transporte de Animais Vivos - Aeroporto":{"ok":397,"pend":5},"Transporte de Animais de Estimação - Cães e Gatos":{"ok":459,"pend":8}};
+
+// All 886 colaboradores (sample for search — using pend list + indicator)
+const ALL_COLABS_SAMPLE = COLABS_PEND; // used for full search page
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+function goPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── CHARTS ────────────────────────────────────────────────────────────────────
+let charts = {};
+function mkChart(id, cfg) {
+  if(charts[id]) { try{charts[id].destroy()}catch(e){} }
+  charts[id] = new Chart(document.getElementById(id), cfg);
+}
+
+function initCharts() {
+  // Donut conformidade
+  mkChart('cDonut', {type:'doughnut', data:{
+    labels:['Em Dia','Pendentes'],
+    datasets:[{data:[15343,272],backgroundColor:['#217346','#C00000'],borderWidth:3,borderColor:'#fff',hoverOffset:4}]
+  }, options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw.toLocaleString('pt-BR')}`}}}}});
+
+  // Cargo pizza
+  const cargos = Object.entries(CARGO_STATS).sort((a,b)=>b[1].pessoas-a[1].pessoas).slice(0,6);
+  const cols6 = ['#003366','#005B9A','#217346','#F0A500','#E36C09','#C00000'];
+  mkChart('cCargo',{type:'doughnut',data:{
+    labels:cargos.map(([k])=>k.replace('AGENTE AEROPORTO','AG.AERO').replace('AGENTE BAGAGEM E RAMPA','AG.BAGAGEM').replace('OPERADOR EQUIPAMENTOS','OP.EQUIP').replace('LIDER RAMPA','LIDER RAMPA').replace('SUPERVISOR AEROPORTO OPERACIONAL','SUPERVISOR')),
+    datasets:[{data:cargos.map(([,v])=>v.pessoas),backgroundColor:cols6,borderWidth:2,borderColor:'#fff'}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:10,padding:6}}}}});
+}
+
+// ── TOP CURSOS ─────────────────────────────────────────────────────────────────
+function buildTopCursos() {
+  const sorted = Object.entries(CURSO_RESUME).filter(([,v])=>v.pend>0).sort((a,b)=>b[1].pend-a[1].pend).slice(0,10);
+  const max = sorted[0][1].pend;
+  const el = document.getElementById('top-cursos');
+  el.innerHTML = sorted.map(([c,v])=>{
+    const pct = Math.round(v.ok/(v.ok+v.pend)*100);
+    const short = c.length>34?c.substring(0,34)+'…':c;
+    const barW = Math.round((v.pend/max)*100);
+    const barCol = v.pend>=20?'#C00000':v.pend>=10?'#E36C09':'#F0A500';
+    return `<div class="hbar-wrap">
+      <div class="hbar-label"><span title="${c}">${short}</span><span style="color:${barCol};font-weight:700">${v.pend} pend.</span></div>
+      <div class="hbar"><div class="hbar-fill" style="width:${barW}%;background:${barCol}"><span>${pct}%</span></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── PEND CARGO ─────────────────────────────────────────────────────────────────
+function buildPendCargo() {
+  const sorted = Object.entries(CARGO_STATS).filter(([,v])=>v.pend>0).sort((a,b)=>b[1].pend-a[1].pend);
+  const max = sorted[0][1].pend;
+  const el = document.getElementById('pend-cargo');
+  el.innerHTML = sorted.map(([c,v])=>{
+    const pct = Math.round(v.ok/(v.ok+v.pend)*100);
+    const short = c.replace('AGENTE AEROPORTO CONTROLE OPERACIONAL','AG.AERO CONTROLE').replace('AGENTE AEROPORTO LIDER','AG.AERO LIDER').replace('AGENTE AEROPORTO VIAGENS','AG.AERO VIAGENS').replace('AGENTE AEROPORTO BAGAGENS','AG.AERO BAGAGENS').replace('AGENTE AEROPORTO','AG.AEROPORTO').replace('AGENTE BAGAGEM E RAMPA','AG.BAGAGEM/RAMPA').replace('OPERADOR EQUIPAMENTOS','OP.EQUIPAMENTOS').replace('SUPERVISOR AEROPORTO OPERACIONAL','SUP.AEROPORTO').replace('SUPERVISOR OPERACIONAL RAMPA','SUP.RAMPA');
+    const barW = Math.round((v.pend/max)*100);
+    const barCol = v.pend>=50?'#C00000':v.pend>=20?'#E36C09':'#F0A500';
+    return `<div class="hbar-wrap">
+      <div class="hbar-label"><span>${short} <small style="color:#aaa">(${v.pessoas}p)</small></span><span style="color:${barCol};font-weight:700">${v.pend} pend.</span></div>
+      <div class="hbar"><div class="hbar-fill" style="width:${barW}%;background:${barCol}"><span>${pct}%</span></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── CONF GESTORES (exec) ───────────────────────────────────────────────────────
+function buildConfGestores() {
+  const sorted = Object.entries(GESTOR_STATS).sort((a,b)=>b[1].pend-a[1].pend).slice(0,15);
+  const el = document.getElementById('conf-gestores');
+  el.innerHTML = sorted.map(([g,v])=>{
+    const tot = v.ok+v.pend;
+    const pct = Math.round(v.ok/tot*100);
+    const col = pct>=99?'#217346':pct>=95?'#F0A500':'#C00000';
+    const short = g.split(' ').slice(0,2).join(' ');
+    return `<div style="display:grid;grid-template-columns:180px 50px 50px 1fr 50px;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #f5f5f5">
+      <span style="font-size:11px;color:#333;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${g}">${short}</span>
+      <span style="font-size:10px;color:#888;text-align:center">${v.pessoas}p</span>
+      <span style="font-size:10px;color:#C00000;font-weight:700;text-align:center">${v.pend}</span>
+      <div class="pgbar"><div class="pgfill" style="width:${pct}%;background:${col}"></div></div>
+      <span style="font-size:11px;color:${col};font-weight:700;text-align:right">${pct}%</span>
+    </div>`;
+  }).join('');
+}
+
+// ── PAGE: CURSOS ───────────────────────────────────────────────────────────────
+function renderCursos() {
+  const q = (document.getElementById('f-curso').value||'').toLowerCase();
+  const tipo = document.getElementById('f-curso-tipo').value;
+  let rows = Object.entries(CURSO_RESUME).map(([c,v],i)=>({nome:c,ok:v.ok,pend:v.pend,total:v.ok+v.pend,i:i+1}));
+  rows.sort((a,b)=>b.pend-a.pend||b.ok-a.ok);
+  if(q) rows=rows.filter(r=>r.nome.toLowerCase().includes(q));
+  if(tipo==='pend') rows=rows.filter(r=>r.pend>0);
+  if(tipo==='ok') rows=rows.filter(r=>r.pend===0);
+  document.getElementById('body-cursos').innerHTML=rows.map((r,i)=>{
+    const pct = r.total>0?Math.round(r.ok/r.total*100):100;
+    const col = pct===100?'#217346':pct>=95?'#F0A500':'#C00000';
+    return `<tr>
+      <td style="color:#888;font-size:10px">${i+1}</td>
+      <td style="font-weight:500">${r.nome}</td>
+      <td style="text-align:center">${r.total}</td>
+      <td style="text-align:center;color:#217346;font-weight:600">${r.ok}</td>
+      <td style="text-align:center">${r.pend>0?`<span class="pend">${r.pend}</span>`:'<span class="ok">0</span>'}</td>
+      <td><div style="display:flex;align-items:center;gap:6px">
+        <div class="pgbar" style="flex:1"><div class="pgfill" style="width:${pct}%;background:${col}"></div></div>
+        <span style="font-size:10px;color:${col};font-weight:700;min-width:34px">${pct}%</span>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── PAGE: PENDENTES ────────────────────────────────────────────────────────────
+function populatePendFilters() {
+  const gestores = [...new Set(COLABS_PEND.map(c=>c.gestor))].sort();
+  const cargos = [...new Set(COLABS_PEND.map(c=>c.cargo))].sort();
+  document.getElementById('f-pg').innerHTML='<option value="">Todos</option>'+gestores.map(g=>`<option value="${g}">${g.split(' ').slice(0,2).join(' ')}</option>`).join('');
+  document.getElementById('f-pc').innerHTML='<option value="">Todos</option>'+cargos.map(c=>`<option value="${c}">${c}</option>`).join('');
+}
+
+function renderPend() {
+  const g = document.getElementById('f-pg').value;
+  const c = document.getElementById('f-pc').value;
+  const q = (document.getElementById('f-pq').value||'').toLowerCase();
+  let rows = COLABS_PEND;
+  if(g) rows=rows.filter(r=>r.gestor===g);
+  if(c) rows=rows.filter(r=>r.cargo===c);
+  if(q) rows=rows.filter(r=>r.nome.toLowerCase().includes(q)||r.pendentes.some(p=>p.toLowerCase().includes(q)));
+  document.getElementById('body-pend').innerHTML=rows.map(r=>{
+    const col = r.qtdPend>=10?'#C00000':r.qtdPend>=5?'#E36C09':'#F0A500';
+    return `<tr>
+      <td style="color:#888;font-size:10px">${r.bp}</td>
+      <td style="font-weight:600">${r.nome}</td>
+      <td style="font-size:10px">${r.cargo}</td>
+      <td style="font-size:10px">${r.gestor.split(' ').slice(0,2).join(' ')}</td>
+      <td style="text-align:center"><span style="background:${col};color:#fff;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700">${r.qtdPend}</span></td>
+      <td>${r.pendentes.map(p=>`<span class="chip" title="${p}">${p.length>28?p.substring(0,28)+'…':p}</span>`).join('')}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── PAGE: GESTORES ─────────────────────────────────────────────────────────────
+function initGestores() {
+  const sorted = Object.entries(GESTOR_STATS).sort((a,b)=>b[1].pend-a[1].pend);
+  // Table
+  document.getElementById('body-gest-tbl').innerHTML=sorted.map(([g,v])=>{
+    const tot=v.ok+v.pend; const pct=Math.round(v.ok/tot*100);
+    const col=pct>=99?'#217346':pct>=95?'#F0A500':'#C00000';
+    return `<tr>
+      <td>${g.split(' ').slice(0,3).join(' ')}</td>
+      <td style="text-align:center">${v.pessoas}</td>
+      <td style="text-align:center;color:#C00000;font-weight:700">${v.pend}</td>
+      <td><div style="display:flex;align-items:center;gap:6px">
+        <div class="pgbar" style="flex:1"><div class="pgfill" style="width:${pct}%;background:${col}"></div></div>
+        <span style="font-size:10px;color:${col};font-weight:700;min-width:34px">${pct}%</span>
+      </div></td>
+    </tr>`;
+  }).join('');
+  // Chart
+  const top12 = sorted.slice(0,12);
+  mkChart('cGestores',{type:'bar',data:{
+    labels:top12.map(([g])=>g.split(' ')[0]+' '+g.split(' ')[1]),
+    datasets:[
+      {label:'Pendentes',data:top12.map(([,v])=>v.pend),backgroundColor:'#C00000',borderRadius:3},
+      {label:'OK',data:top12.map(([,v])=>v.ok),backgroundColor:'#217346',borderRadius:3},
+    ]
+  },options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},scales:{x:{beginAtZero:true,ticks:{font:{size:9}}},y:{ticks:{font:{size:9}}}}}});
+}
+
+// ── PAGE: CARGO ────────────────────────────────────────────────────────────────
+function initCargo() {
+  const sorted = Object.entries(CARGO_STATS).sort((a,b)=>b[1].pend-a[1].pend);
+  document.getElementById('body-cargo-tbl').innerHTML=sorted.map(([c,v])=>{
+    const tot=v.ok+v.pend; const pct=Math.round(v.ok/tot*100);
+    const col=pct>=99?'#217346':pct>=95?'#F0A500':'#C00000';
+    return `<tr>
+      <td>${c}</td>
+      <td style="text-align:center">${v.pessoas}</td>
+      <td style="text-align:center;color:#C00000;font-weight:700">${v.pend}</td>
+      <td style="text-align:center"><span style="color:${col};font-weight:700">${pct}%</span></td>
+    </tr>`;
+  }).join('');
+  const top8=sorted.slice(0,8);
+  mkChart('cCargoBar',{type:'bar',data:{
+    labels:top8.map(([c])=>c.replace('AGENTE AEROPORTO CONTROLE OPERACIONAL','AG.AERO CONTROLE').replace('AGENTE AEROPORTO LIDER','AG.AERO LIDER').replace('AGENTE AEROPORTO VIAGENS','AG.AERO VIAGENS').replace('AGENTE AEROPORTO BAGAGENS','AG.AERO BAGAGENS').replace('AGENTE AEROPORTO','AG.AEROPORTO').replace('AGENTE BAGAGEM E RAMPA','AG.BAGAGEM/RAMPA').replace('OPERADOR EQUIPAMENTOS','OP.EQUIPAMENTOS').replace('SUPERVISOR AEROPORTO OPERACIONAL','SUP.AEROPORTO')),
+    datasets:[{label:'Pendentes',data:top8.map(([,v])=>v.pend),backgroundColor:top8.map(([,v])=>v.pend>=50?'#C00000':v.pend>=20?'#E36C09':'#F0A500'),borderRadius:4}]
+  },options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{font:{size:9}}},y:{ticks:{font:{size:9}}}}}});
+}
+
+// ── BUSCA ──────────────────────────────────────────────────────────────────────
+function renderBusca() {
+  const q = document.getElementById('busca-q').value.trim().toLowerCase();
+  const el = document.getElementById('busca-result');
+  if(q.length<2){el.innerHTML='<span style="color:#aaa">Digite ao menos 2 caracteres para buscar...</span>';return;}
+  const res = COLABS_PEND.filter(c=>c.nome.toLowerCase().includes(q)||c.bp.includes(q)||c.cargo.toLowerCase().includes(q)||c.gestor.toLowerCase().includes(q));
+  if(!res.length){el.innerHTML=`<div style="color:#888;padding:12px">Nenhum colaborador com pendência encontrado para "<b>${q}</b>".<br><small style="color:#aaa">A busca é feita sobre os 116 colaboradores com pendências.</small></div>`;return;}
+  el.innerHTML=`<div style="color:#888;font-size:10px;margin-bottom:8px">${res.length} resultado(s) encontrado(s)</div>`+res.map(c=>{
+    const col=c.qtdPend>=10?'#C00000':c.qtdPend>=5?'#E36C09':'#F0A500';
+    return `<div style="border:1px solid #e8e8e8;border-radius:8px;padding:12px 14px;margin-bottom:8px;border-left:4px solid ${col}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-weight:700;font-size:13px">${c.nome}</span>
+        <span style="background:${col};color:#fff;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700">${c.qtdPend} pendente(s)</span>
+      </div>
+      <div style="font-size:10px;color:#888;margin-bottom:6px">${c.cargo} · BP: ${c.bp} · Gestor: ${c.gestor}</div>
+      <div>${c.pendentes.map(p=>`<span class="chip">${p.length>32?p.substring(0,32)+'…':p}</span>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', ()=>{
+  initCharts();
+  buildTopCursos();
+  buildPendCargo();
+  buildConfGestores();
+  renderCursos();
+  populatePendFilters();
+  renderPend();
+  initGestores();
+  initCargo();
+});
+document.addEventListener('DOMContentLoaded', ()=>{});
+// Fallback immediate init
+setTimeout(()=>{
+  initCharts();
+  buildTopCursos();
+  buildPendCargo();
+  buildConfGestores();
+  renderCursos();
+  populatePendFilters();
+  renderPend();
+  initGestores();
+  initCargo();
+}, 200);
+</script>
+</body>
+</html>
